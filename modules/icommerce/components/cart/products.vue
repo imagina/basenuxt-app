@@ -28,15 +28,14 @@
           <q-select 
             v-if="productsHelper.hasFrencuency(product) && product?.frecuency"
             v-model="product.frecuency"
-            :options="productsHelper.getFrecuencyOptions(product, frecuencyId)"
+            :options="productsHelper.getFrecuencyOptions(product)"
             @update:model-value="calcSubtotal()"
             option-value="value"
             option-label="label"
             outlined
             class="tw-w-52 tw-mb-1 tw-rounded-lg"
             input-class="tw-w-52 tw-mb-1 tw-rounded-lg"            
-            label="Periodo" 
-
+            label="Periodo"
           />
           <span class="tw-text-xs tw-text-[#818181]">
             Renuevas a $00.000/mes el 00/00/000. ¡Cancela cuando quieras!
@@ -60,10 +59,10 @@
         <section class="tw-flex tw-items-start tw-gap-[30px] tw-text-[#444444]">
           <div class="tw-flex tw-flex-col">
             <span class="tw-text-[13px]">Tarifa de configuración:</span>
-            <span class="tw-text-lg tw-font-semibold">$000.000 COP</span>
+            <span class="tw-text-lg tw-font-semibold">$000.000 {{ currency }}</span>
           </div>
           <div class="tw-w-fit tw-px-4 tw-py-1.5 tw-rounded-full tw-border tw-border-[#00000033]">
-            <span class="tw-text-lg tw-font-semibold">${{ productsHelper.getPrice(product) }} {{ currency}}/mes</span>
+            <span class="tw-text-lg tw-font-semibold">${{ productsHelper.getPrice(product, currency) }} {{ currency}}</span>
           </div>
         </section>
       </div>
@@ -88,7 +87,7 @@ const props = defineProps({
 
 const emits = defineEmits(['removeProduct', 'subtotal'])
 
-const frecuencyId = 4 //frecuency option
+const frecuencyId = 1 //frecuency option
 const checkoutProducts = ref()
 const subtotal = ref(0)
 
@@ -103,6 +102,13 @@ watch(
   },
 )
 
+watch(
+  () => props.currency,
+  (newQuery, oldQuery) => {
+    calcSubtotal()
+  },
+)
+
 function init(){
   configProducts()
 }
@@ -111,7 +117,7 @@ function configProducts(){
   checkoutProducts.value = props.products
   checkoutProducts.value.forEach((product) =>{
     if(productsHelper.hasFrencuency(product)){
-      const options = productsHelper.getFrecuencyOptions(product, frecuencyId)
+      const options = productsHelper.getFrecuencyOptions(product)
       if(options.length) {
         product.frecuency = options[0]
       }      
@@ -121,11 +127,8 @@ function configProducts(){
 }
 
 function calcSubtotal(){
-  subtotal.value = 0;
-  checkoutProducts.value.forEach(product => {    
-    subtotal.value = subtotal.value + productsHelper.getPrice(product)
-  });
-  emits('subtotal', subtotal.value)
+  const subtotal = productsHelper.getSubtotal(checkoutProducts.value, props.currency)  
+  emits('subtotal', subtotal)
 }
 
 </script>

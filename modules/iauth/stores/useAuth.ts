@@ -344,24 +344,7 @@ export const useAuthStore = defineStore('authStore', {
     },
 
     /* site settings */
-    async getSettings() {
-      const config = useRuntimeConfig()
-      await $fetch(`${config.public.apiRoute}/api${apiRoutes.settings}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        /*
-        params: {
-          filter: {
-            name: settings,
-          },
-        },
-        */
-      }).then(response => {          
-        this.settings = response?.data 
-      })
-    },
+    
 
     async getSetting(name){
       const settings = this.settings.siteSettings || null
@@ -371,20 +354,41 @@ export const useAuthStore = defineStore('authStore', {
       return setting && setting?.value ? setting.value : null
     }, 
 
+    /* site settings */
+    async getSettings(settings: string[]) {
+      const config = useRuntimeConfig()
+
+      return await $fetch(`${config.public.apiRoute}/api${apiRoutes.settings}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        params: {
+          filter: {
+            name: settings,
+          },
+        },
+      })
+    },
     /* facebook settings */
     async getFacebookSettings() {
-      this.getSetting('isite::facebookClientId').then(response => this.facebookClientId = response)      
+      await this.getSettings(['isite::facebookClientId']).then(
+        (response: any) => {
+          if (response?.data) {
+            this.facebookClientId = response.data['isite::facebookClientId']
+          }
+        },
+      )
     },
     /* google settings */
-    async getGoogleSettings() {     
-      this.getSetting('isite::googleClientId').then(response => this.googleClientId = response)
-    },
-
-    /* captcha*/
-    async getCaptchaSettings(){
-      
-      const fields  = ['isite::reCaptchaV2Site', 'isite::reCaptchaV3Site', 'isite::activateCaptcha']
-      
+    async getGoogleSettings() {
+      await this.getSettings(['isite::googleClientId']).then(
+        (response: any) => {
+          if (response?.data) {
+            this.googleClientId = response.data['isite::googleClientId']
+          }
+        },
+      )
     },
 
     //user edit

@@ -58,7 +58,7 @@
 							tw-overflow-y-auto
 						"
 						v-if="product?.description"
-						v-html="product?.description.toLowerCase()"
+						v-html="product?.description"
 					>
 					</div>
 				</div>
@@ -116,12 +116,15 @@ import productsHelper from '../helpers/products.ts'
 const settings = {
 	justOneProdcut: false //one product and redirects to checkout
 }
-	const router = useRouter()
-	const products = ref([])
-	const cartState = useStorage('shoppingCart', {products: []})
+const router = useRouter()
+const products = ref([])
+const cartState = useStorage('shoppingCart', {
+	products: [],
+	currency: {}
+})
 
   // 'ad' (ascending-descending) or 'da' (descending-ascending)
-	const sort = ref([])
+	
 	const sortOptions = [
 		{
 			name: 'A-Z',
@@ -132,6 +135,8 @@ const settings = {
 			value: 'asc'
 		}]
 
+		const sort = ref([sortOptions[0].value])	
+
 	//peding to check on cart..
 	const productLabel = computed(() => settings.justOneProdcut ? 'Comprar'	: 'Añadir')
 	const frecuencyId = 1 //frecuency option
@@ -140,11 +145,13 @@ const settings = {
 		return (!products.value[index].quantity != 0)
 	}
 
-
+	onBeforeMount( async () => {
+		await getProducts()
+	})
 
 	async function init(){
-		sort.value = sortOptions[0].value 
-		await getProducts()
+		///sort.value = sortOptions[0].value 
+		
 	}
 
 	async function getProducts(){
@@ -196,7 +203,7 @@ const settings = {
 	})
 
   </script>
- <style>
+<style>
  	.product {
 		.description ul {
 			@apply tw-list-disc

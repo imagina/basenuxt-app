@@ -7,7 +7,7 @@
   >
     <div 
       class="
-        tw-max-w-[1680px]
+        
         tw-min-h-[60px] 
         tw-mx-auto 
         tw-px-4 
@@ -80,7 +80,7 @@
             :to="{ path: getPath('iauth.login'), query: {redirectTo: 'icommerce.products'} }"
             class="dropdown-sign-in tw-text-[15px]"
           >
-            Inicia sesión o regístrate
+            Iniciar sesión
           </NuxtLink>
           <!-- /loggin -->
 
