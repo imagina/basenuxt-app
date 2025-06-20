@@ -25,21 +25,6 @@ const helper = {
 		return options
 	},
 
-	translateFrecuencyOptionLabel(label){
-		//const { t } = useI18n()
-		const labels = {
-			'Triennially': "icommerce.frecuencies.triennially",
-			'Biennially': "icommerce.frecuencies.biennially",
-			'Annually': "icommerce.frecuencies.annually",
-			'Quarterly': "icommerce.frecuencies.quarterly",
-			'Semiannually': "icommerce.frecuencies.semiannually",
-			'Monthly': "icommerce.frecuencies.monthly",
-		}
-
-		return labels[label] || label
-
-	},
-
 	/**/
 	getPrice: (product, currencyValue = 'COP') => {
 		const frecuencies = helper.getFrecuencyOptions(product)
@@ -98,25 +83,7 @@ const helper = {
 		return `${helper.currencyFormat(value, currency)} ${helper.getCurrency(currency).value}`
 	},
 
-	/* extr*/
-	extractPrice(str) {
-		  // Match digits and commas, then remove commas
-		  const match = str.match(/[\d,]+/);
-		  if (match) {
-			return parseInt(match[0].replace(/,/g, ''), 10);
-		  }
-		  return null; // Return null if no price found
-	},
-
-	getSubtotal(products, currencyValue){
-		let subtotal = Number(0);
-		products.forEach(product => {
-			//let price = helper.getPrice(product, currencyValue)
-			//if(product?.price) price = price + product.price
-			subtotal  = Number(subtotal) + Number(product.price)
-		});
-		return Number.isInteger(subtotal) ? subtotal : subtotal.toFixed(2)
-	},
+	
 
 	getCurrencies(){
 		const { t } = useI18n()
@@ -171,36 +138,7 @@ const helper = {
 		return currencies[currency].format(value)
 	},
 
-	calcDiscount(products, subtotal){
-
-		let total = Number(0)
-		let totalNoDiscount = Number(0)
-		let percent = 0
-
-		products.forEach(product => {
-
-			if(product?.category){
-				totalNoDiscount = Number(totalNoDiscount) + Number(product?.discount?.priceByMonths || 0) + (product.price - product.frecuency.value)
-			} else {
-				totalNoDiscount = Number(totalNoDiscount) + product.price
-			}
-			total  = Number(total) + (Number(product?.discount?.value) || 0 )
-
-		});
-
-
-		let diff = (totalNoDiscount - subtotal) || 0;
-		percent = ((diff / totalNoDiscount) * 100) || 0
-		percent =  (percent > 1) || percent == 0 ? Math.round(percent) : percent.toFixed(2)
-
-		return {
-			total,
-			totalNoDiscount,
-			percent
-		}
-	}
-
-
+	
 
 
 }

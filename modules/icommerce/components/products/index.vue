@@ -91,20 +91,6 @@
 
 				</div>
 				<!-- description -->
-				<div
-					v-if="product?.description && getStorageDescription(product?.description)"
-					class="tw-flex tw-justify-between tw-align-middle"
-				>
-					<div>
-						<span class="tw-text-[40px] tw-font-semibold">{{ getStorageDescription(product.description) }}</span>
-					</div>
-					<div v-if="isCPanel(product)">
-						<img src="../../assets/img/cP_white.png" />
-					</div>
-					<div v-else >
-						<img src="../../assets\img\red-logo-imagina.png" />
-					</div>
-				</div>
 				<div class="tw-h-[140px]">
 					<div
 						class="
@@ -132,7 +118,7 @@
 				<!-- action buttons -->
 					<div class="tw-flex tw-gap-4 tw-items-center tw-justify-center">
 						<q-btn
-							v-if="false"
+							
 							label="Ver Plan"
 							text-color="black"
 							no-caps
@@ -217,8 +203,7 @@ const { t } = useI18n()
 const products = ref(props?.products?.data || [])
 const loading = ref(false)
 
-//pagination.value.lastPage = response.meta.page.lastPage || pagination.value.lastPage
-//paginationModel.value.rowsNumber = response.meta.page.total
+
 
 const paginationModel = ref({
       page: 1,
@@ -251,14 +236,6 @@ const bannerImage = computed( () =>  {
  
 })
 
-/*
-const cartState = useState('icommerce.shoppingCart', () => {
-	return {
-		products: [],
-		currency: 'COP'
-	}
-})
-	*/
 
 const cartState = useStorage('shoppingCart', {
 	products: [],
@@ -311,13 +288,12 @@ const cartState = useStorage('shoppingCart', {
 
 
 	//getProducts()
-	async function getProducts(){
-		console.log('getProducts')
+	async function getProducts(){		
 		const params = {
 			take: paginationModel?.value?.rowsPerPage || 10,
 			page: paginationModel?.value?.page || 1,
 			order: sort.value.value,
-			include: 'relatedProducts,categories,category,parent,manufacturer,optionsPivot.option,optionsPivot.productOptionValues'
+			//include: 'relatedProducts,categories,category,parent,manufacturer,optionsPivot.option,optionsPivot.productOptionValues'
 		}
 
 		//router.getRoutes().find(page => page.name == pageName)
@@ -339,51 +315,10 @@ const cartState = useStorage('shoppingCart', {
 				paginationModel.value.rowsNumber = response.meta.page.total
 			}
 
-			//add quantity
-			/*
-			products.value.forEach((product) => {
-				if (product?.quantity) { product.quantity = 1 }
-			})
-			*/
-
 		})
 		loading.value = false
 	}
-
-
-	function getStorageDescription(description){
-		const result = extractValueByLabel(description, 'Espacio en Disco')
-		if (result) return result.match(/[a-zA-Z0-9]+/g)?.join('') || '';
-		return false
-	}
-
-
-	function extractValueByLabel(html, label) {
-		const regex = new RegExp(
-			`${label}:\\s*(?:&nbsp;|\\s|<[^>]+>)*([^<\\s][^<]*)`,
-			'gi'
-		);
-		const matches = [...html.matchAll(regex)];
-
-		for (const match of matches) {
-			if (match[1]) {
-			return match[1]
-				.replace(/&nbsp;/gi, ' ')
-				.replace(/\s+/g, ' ')
-				.trim();
-			}
-		}
-
-		return null;
-	}
-
-	function isCPanel(product){
-		const str1 = product?.category?.title || ''
-		const str2 = product?.description || ''
-		const word = 'cpanel'
-		const regex = new RegExp(`\\b${word}\\b`, 'i'); // 'i' makes it case-insensitive
-		return regex.test(str1) || regex.test(str2)
-	}
+	
 
 	onMounted(async () => {
 		window.addEventListener('resize', updateViewport)	

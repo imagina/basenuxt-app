@@ -7,7 +7,7 @@ const pages = [
     //page: 'pages/products.vue',
     page: 'pages/products.vue',
     meta: {
-      layout: 'blank',
+      layout,
       title: 'icommerce.cms.sidebar.adminProducts',
       breadcrumb: 'Productos'
     },

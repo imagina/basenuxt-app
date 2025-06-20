@@ -9,11 +9,9 @@
 </template>
 <script setup>
 
-import hostingWindowsAsp from './categories/hostingWindowsAsp.vue';
-import hostingIpanelPhp from './categories/hostingIpanelPhp.vue';
-import hostingCpanel from './categories/hostingCpanel.vue';
-import hostingCpanelFree from './categories/hostingCpanelFree.vue';
-import resellerHosting from './categories/resellerHosting.vue';
+import banner_1 from './categories/banner_1.vue'
+import banner_2 from './categories/banner_2.vue';
+
  
 
 const props = defineProps( {
@@ -23,25 +21,23 @@ const props = defineProps( {
 } )
 
 const banners = [
-  {
-    //hosting-cpanel => Hosting Cpanel (PHP)
-    id: 1, component: hostingCpanel
+  {    
+    id: 1, component: banner_1
+  },
+  {    
+    id: 2, component: banner_1
   },
   {
-    //hosting-con-dominio-gratuito => Hosting Cpanel (PHP)
-    id: 32, component: hostingCpanelFree
+    
+    id: 3, component: banner_2
   },
   {
-    //hosting-linux-php => Hosting Ipanel PHP
-    id: 49, component: hostingIpanelPhp
+    
+    id: 4, component: banner_2
   },
   {
-    //hosting-windows-asp
-    id: 2, component: hostingWindowsAsp
-  },
-  {
-    //hosting-multi-dominio-para-revendedores-disenadores
-    id: 4, component: resellerHosting
+    
+    id: 5, component: banner_2
   }
 
 ]

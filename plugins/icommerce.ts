@@ -9,8 +9,14 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     userStore.refreshSession()
     if(!userStore.settings) userStore.getSettings()
     
+    const usdRates = {
+      USDRates: {
+        COP: 4000
+      }
+    }
+  
     console.log('plugin')
-   // useState('icommerce.trm', () => usdRates)
+    useState('icommerce.trm', () => usdRates)
     
   }
 })

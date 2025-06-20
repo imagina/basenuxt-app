@@ -9,13 +9,6 @@ const apiRoutes = {
 	countries: '/v2/ilocations/countries',
 	provinces: '/v2/ilocations/provinces',
 	cities: '/v2/ilocations/cities',
-	/* imagina customs */
-	domainCheck: `/api/icommerce/verify-domain`,
-	domainPricing: `/api/icommerce/domain-pricing`,
-
-	/*imagina clients*/
-	imaginaClients: 'https://clientes.imaginacolombia.com',
-	newCartOrder: 'https://clientes.imaginacolombia.com/newcartorder.php'
 }
 
 export default apiRoutes
