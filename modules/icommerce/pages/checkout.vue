@@ -618,6 +618,8 @@ async function goToPayment() {
 	user.country = user.country['iso2'] || user.country['name']
 	user.identificationType = user.identificationType.value
 	order.user = user
+	console.log(order)
+	return
 
 	const res = await $fetch(apiRoutes.newCartOrder, {
 		method: 'POST',

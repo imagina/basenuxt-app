@@ -61,14 +61,15 @@
 </template>
 <script setup>
 
-import apiRoutes from '../../config/apiRoutes'
 import constants from '../../config/constants'
 import productsPage from '../../pages/products.vue'
+import categoriesHelper from '../../helpers/categories'
 
 const route = useRoute()
 const router = useRouter()
 
-const selectedCategoryState = useState('icommerce.selected.category', () => null)
+//const selectedCategoryState = useState('icommerce.selected.category')
+const selectedCategoryState = ref(null)
 
 const categories = ref([])
 const isMobile = ref(false)
@@ -80,81 +81,60 @@ function updateViewport() {
 	isMobile.value = window.innerWidth < BREAKPOINT
 }
 
-onBeforeMount(async () => {	
-	await getCategories()
+const props = defineProps( {
+	categories: {
+		type: Array,
+		required: false	
+	} 
 })
 
+
+let data =  props.categories || []				
+const parents = data
+
+categories.value = parents
+const slug = route?.params?.slug || null
+selectedCategoryState.value =  await categoriesHelper.getSelectedCategory(slug)
+
+
+parents.forEach((category) => {
+	router.addRoute({					
+		name: `icommerce.products.${category.slug}`,
+		path: `/products`,
+		params: {
+			slug: category.slug
+		},
+		meta: {
+			middleware: 'auth',
+			layout: 'icommerce',							
+			breadcrumb: category.title, 
+			
+		},
+		component: productsPage
+	})
+})
+
+
+
+
+
 async function init(){
-	
-	
 	updateViewport()
 	window.addEventListener('resize', updateViewport)	
 }
 
 async function getSelectedCategory(categories){
-	    const route = useRoute()		
-
 	let category = categories.find(item => {
 		if(route.params?.slug == item.slug){
 			return item
 		}
 	}) 
 	if(!category) {
-		category = categories[0]
-		
+		category = categories[0]		
 	}
 	selectedCategoryState.value = category
 	emit('category', category)
 }
-
-async function getCategories(){
-
-	const params = {
-		take: 60,
-		page: 1,
-		filter : {
-			parentId: constants.cagtegories.mainCategoryId,
-			order: {
-				field: "created_at",
-				way: "desc"
-			}			
-		}
-		
-	}
-
-	baseService.index(apiRoutes.categories, params).then(response => {
-		let  data =  response?.data || []				
-		const parents = data		
-		
-		
-		parents.forEach((category) => {				
-			const children = data.filter(item => item.parentId == category.id && item.parentId != constants.cagtegories.mainCategoryId )
-			if(children.length) category.children = children
-		})
-
-		categories.value = parents
-
-		const router = useRouter()
-		parents.forEach((category) => {
-			router.addRoute({					
-						name: `icommerce.products.${category.slug}`,
-						path: `/products`,
-						params: {
-						  slug: category.slug
-						},
-						meta: {
-							middleware: 'auth',
-							layout: 'icommerce',							
-							breadcrumb: category.title, 
-							
-						},
-						component: productsPage
-			})
-		})
-		getSelectedCategory(parents)
-	})
-}
-
 
 
 function isActive(category){

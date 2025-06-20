@@ -1,4 +1,4 @@
-import Clarity from '@microsoft/clarity';
+/*import Clarity from '@microsoft/clarity';
 
 export default defineNuxtPlugin(() => {
 
@@ -10,3 +10,4 @@ export default defineNuxtPlugin(() => {
     }    
   })
 })
+  */

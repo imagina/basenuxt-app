@@ -23,7 +23,7 @@
 	
 	<div class="tw-pt-5 tw-mt-2.5 " v-if="category">
 		<span class="tw-text-2xl md:tw-text-4xl tw-font-semibold">{{ category.title }}</span>
-		<p v-if="category.description"  v-html="category.description" class="tw-text-base tw-mt-3.5  tw-hidden">                        
+		<p v-if="false" v-html="category.description" class="tw-text-base tw-mt-3.5">                        
 		</p>
 	</div>
 	<hr  class="tw-my-6 tw-w-full" />
@@ -147,7 +147,7 @@
 						/>
 						<NuxtLink 
 							:to="{
-								path: getPath('icommerce.cart'), 
+								path: '/cart', 
 								query: {
 									a: 'add',
 									pid: product.externalId
@@ -195,12 +195,19 @@ import apiRoutes from '../../config/apiRoutes'
 import constants from '../../config/constants'
 import { useStorage } from '@vueuse/core'
 import productsHelper from '../helpers/products.ts'
+import categoriesHelper from '../helpers/categories.ts'
 import CurrencySelector from '../../components/currencySelector'
 import categoryBanner from './banners'
+
+const router = useRouter()
+const route = useRoute()
 
 const props = defineProps( {
   category: {
     type: Object
+  }, 
+  products: {
+	type: Object
   }
 } )
 
@@ -209,7 +216,11 @@ const meta = {
 	description: 'Lideres en Hosting y registro de Dominios en Colombia. Mayor rendimiento al mejor precio. 15 años de experiencia más de 10.000 clientes confían en nosotros. Asesores en Bogotá, Ibagué  y Medellín.'
 }
 
-const category = computed(() => props.category)
+//const category = computed(() => props.category)
+const slug = route?.params?.slug || null
+const selectedCategory = await categoriesHelper.getSelectedCategory(slug)
+const category = ref(selectedCategory)
+
 
 useSeoMeta({
   title: () =>  category?.value?.title ||  meta?.title,
@@ -226,23 +237,25 @@ useSeoMeta({
 const settings = {
 	justOneProdcut: true //one product and redirects to checkout
 }
-const router = useRouter()
-const route = useRoute()
+
 
 const { t } = useI18n()
-const products = ref([])
+const products = ref(props?.products?.data || [])
 const loading = ref(false)
+
+//pagination.value.lastPage = response.meta.page.lastPage || pagination.value.lastPage
+//paginationModel.value.rowsNumber = response.meta.page.total
 
 const paginationModel = ref({
       page: 1,
-      rowsNumber: null,
+      rowsNumber: props?.products?.meta?.page?.total || null,
       rowsPerPage: 12,
       descending: true,
       maxPages: 6
     })
 
 const pagination = ref({
-	lastPage: 0,
+	lastPage: props?.products?.meta?.page?.lastPage || 0
 })
 
 
@@ -263,6 +276,15 @@ const bannerImage = computed( () =>  {
  return (isMobile.value ? category.value?.mediaFiles?.secondaryimage?.url : category.value?.mediaFiles?.mainimage?.url ) || false 
  
 })
+
+/*
+const cartState = useState('icommerce.shoppingCart', () => {
+	return {
+		products: [],
+		currency: 'COP'
+	}
+})
+	*/
 
 const cartState = useStorage('shoppingCart', {
 	products: [],
@@ -288,6 +310,7 @@ const cartState = useStorage('shoppingCart', {
 	const frecuencyId = 1 //frecuency option
 
 		
+	/*
 	watch(
 		() => category.value,
 		(newQuery, oldQuery) => {
@@ -295,26 +318,27 @@ const cartState = useStorage('shoppingCart', {
 			getProducts()
 		},
 	)
+		*/
 		
 
 	function disableButton(index) {
 		return (!products.value[index].quantity != 0)
 	}
 
-	onBeforeMount( async () => {		
-	})
-
+	/*
 	async function init(){
-		//await getCategory()
-		
-		await getProducts()
+		getProducts()
 	}
+		*/
 
 	async function getCategory(){
 		//category.value = selectedCategoryState?.value
 	}
 
+
+	//getProducts()
 	async function getProducts(){
+		console.log('getProducts')
 		const params = {
 			take: paginationModel?.value?.rowsPerPage || 10,
 			page: paginationModel?.value?.page || 1,
@@ -342,9 +366,11 @@ const cartState = useStorage('shoppingCart', {
 			}
 
 			//add quantity
+			/*
 			products.value.forEach((product) => {
 				if (product?.quantity) { product.quantity = 1 }
 			})
+			*/
 
 		})
 		loading.value = false
@@ -385,23 +411,9 @@ const cartState = useStorage('shoppingCart', {
 		return regex.test(str1) || regex.test(str2)
 	}
 
-	/* backup
-	function extractValueByLabel(html, label) {
-		const regex = new RegExp(`${label}:\\s*(?:<[^>]+>)*([^<]+)`, 'i');
-		const match = html.match(regex);
-		console.log(match)
-		if (match) {
-			// Replace &nbsp; with normal space and trim the result
-			return match[1].replace(/&nbsp;/g, ' ').trim();
-		}
-		return null;
-	}
-	*/
-
-
 	onMounted(async () => {
 		window.addEventListener('resize', updateViewport)	
-		init();
+		//init();
 	})
 
   </script>
