@@ -3,9 +3,6 @@ import apiRoutes from "~/modules/icommerce/config/apiRoutes";
 export default defineCachedEventHandler(async (event) => {
     const queries = getQuery(event)    
     
-    
-
-
     const config = useRuntimeConfig()
     const apiRoute = `${config.public.apiRoute}/api`    
 
@@ -15,7 +12,7 @@ export default defineCachedEventHandler(async (event) => {
         take: 10,
         page:  1,
         order: 'asc',
-		include: 'relatedProducts,categories,category,parent,manufacturer,optionsPivot.option,optionsPivot.productOptionValues',
+		//include: 'relatedProducts,categories,category,parent,manufacturer,optionsPivot.option,optionsPivot.productOptionValues',
 		filter: {
 			categoryId: queries.categoryId
 		}
