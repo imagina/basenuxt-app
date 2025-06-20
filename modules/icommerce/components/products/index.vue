@@ -145,33 +145,7 @@
 								tw-bg-[#E7E7E7]
 							"
 						/>
-						<NuxtLink 
-							:to="{
-								path: '/cart', 
-								query: {
-									a: 'add',
-									pid: product.externalId
-								}
-							}"
-						>
-							
-
-						<q-btn
-							:label="productLabel"
-							text-color="black"
-							color="amber"
-							no-caps
-							icon="o_shopping_cart"
-							unelevated
-							class="
-								tw-w-full
-								tw-justify-center
-								tw-font-bold
-								tw-rounded-lg
-							"
-							
-						/>
-						</NuxtLink>
+						
 					</div>
 			</q-card>
 		</div>
